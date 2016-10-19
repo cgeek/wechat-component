@@ -1,5 +1,5 @@
 {
-    "name": "cgeek/wechat-component",
+    "name": "cgeek/wechatComponent",
     "description": "微信公众号第三方平台开发 SDK 基于overtrue\wechat",
     "keywords": ["wechat", "weixin","laravel", "sdk"],
     "authors": [
