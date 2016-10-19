@@ -11,7 +11,7 @@
 	"autoload": {
 		"psr-4": {
             "WechatComponent\\": "src/"
-        },
+        }
 	},
 	"require: {
 		"overtrue/wechat": "^3.0"
