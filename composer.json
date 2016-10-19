@@ -1,0 +1,21 @@
+{
+    "name": "cgeek/wechat-component",
+    "description": "微信公众号第三方平台开发 SDK 基于overtrue\wechat",
+    "keywords": ["wechat", "weixin","laravel", "sdk"],
+    "authors": [
+        {
+            "name": "Cgeek",
+            "email": "cgeek.share@gmail.com"
+        }
+    ],
+	"autoload": {
+		"psr-4": {
+            "WechatComponent\\": "src/"
+        },
+	},
+	"minimum-stability": "stable",
+    "license": "MIT"
+	"require: {
+		"overtrue/wechat": "^3.0"
+	}
+}
