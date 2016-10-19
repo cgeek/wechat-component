@@ -1,21 +1,16 @@
 {
-    "name": "cgeek/wechatComponent",
-    "description": "微信公众号第三方平台开发 SDK 基于overtrue\wechat",
-    "keywords": ["wechat", "weixin","laravel", "sdk"],
+    "name": "iwan/wechat",
+    "description": "微信开放平台SDK 基于easywechat",
+    "require": {
+        "easywechat/core": "^3.0",
+        "easywechat/encryption": "^3.0"
+    },
+    "license": "MIT",
     "authors": [
         {
-            "name": "Cgeek",
+            "name": "cgeek",
             "email": "cgeek.share@gmail.com"
         }
     ],
-	"autoload": {
-		"psr-4": {
-            "WechatComponent\\": "src/"
-        }
-	},
-	"require: {
-		"overtrue/wechat": "^3.0"
-	},
-	"minimum-stability": "stable",
-    "license": "MIT"
+    "minimum-stability": "dev"
 }

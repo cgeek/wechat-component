@@ -1,2 +1,0 @@
-# wechat-component
-wechat-component
