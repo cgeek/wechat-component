@@ -1,5 +1,5 @@
 {
-    "name": "iwan/wechat",
+    "name": "iwan/wechat-component",
     "description": "微信开放平台SDK 基于easywechat",
     "require": {
         "easywechat/core": "^3.0",
