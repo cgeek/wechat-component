@@ -12,5 +12,5 @@
             "email": "cgeek.share@gmail.com"
         }
     ],
-    "minimum-stability": "dev"
+    "minimum-stability": "stable"
 }

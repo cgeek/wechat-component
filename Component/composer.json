@@ -1,0 +1,21 @@
+{
+  "name": "iwan/wechat/component",
+  "description": "component module for EasyWeChat SDK.",
+  "keywords": ["wechat", "weixin", "SDK", "menu", "easywechat"],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "cgeek",
+      "email": "cgeek.share@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "IWanWeChat\\Component\\": "."
+    }
+  },
+  "minimum-stability":"dev",
+  "require": {
+    "easywechat/core" : "dev-master"
+  }
+}
