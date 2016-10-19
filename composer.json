@@ -13,9 +13,9 @@
             "WechatComponent\\": "src/"
         },
 	},
-	"minimum-stability": "stable",
-    "license": "MIT"
 	"require: {
 		"overtrue/wechat": "^3.0"
-	}
+	},
+	"minimum-stability": "stable",
+    "license": "MIT"
 }
