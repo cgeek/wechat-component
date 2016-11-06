@@ -1,0 +1,24 @@
+{
+    "name": "iwankeji/wechat-component",
+    "description": "微信开放平台SDK 基于easywechat",
+    "require": {
+        "overtrue/wechat": "^3.0"
+    },
+	"version": "1.0.0",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "cgeek",
+            "email": "cgeek.share@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+	"require-dev": {
+        "phpunit/phpunit": "~5.0"
+    },
+	"autoload": {
+        "psr-4": {
+            "IWankeji\\Wechat\\": "src/"
+        }
+    }
+}
