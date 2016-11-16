@@ -2,7 +2,10 @@
     "name": "iwankeji/wechat-component",
     "description": "微信开放平台SDK 基于easywechat",
     "require": {
-        "overtrue/wechat": "^3.0"
+        "overtrue/wechat": "^3.0",
+        "nesbot/carbon": "^1.21",
+        "illuminate/support": "^5.1",
+        "illuminate/http": "^5.1"
     },
 	"version": "1.0.0",
     "license": "MIT",
