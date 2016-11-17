@@ -2,14 +2,16 @@
 
 namespace IWankeji\Wechat;
 
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Config;
+use Doctrine\Common\Cache\Cache;
+use Doctrine\Common\Cache\FilesystemCache;
+
+use EasyWeChat\Foundation\Config;
+use Pimple\Container;
 
 /**
  * 授权给第三方平台
  */
-class Component
+class Component extends Container
 {
     const COMPONENT_LOGIN_PAGE = 'https://mp.weixin.qq.com/cgi-bin/componentloginpage?component_appid=%s&pre_auth_code=%s&redirect_uri=%s';
     const API_CREATE_PREAUTHCODE = 'https://api.weixin.qq.com/cgi-bin/component/api_create_preauthcode';
@@ -24,6 +26,10 @@ class Component
      */
     protected $appid;
     protected $authorizer_appid;
+
+    private $appsecret;
+    private $component_verify_ticket;
+
     /**
      * Http对象
      *
@@ -33,11 +39,46 @@ class Component
 
     protected $preAuthCodeCacheKey = 'iwankeji.wechat.pre_auth_code.%s';
 
-    public function __construct()
+    public function __construct($config)
     {
-        $this->http = new ComponentHttp(new ComponentAccessToken());
+        //var_dump($config);
 
-        $this->appid = Config::get('wechat.componentAppId');
+        $this->appid = $config['appId'];
+
+        $this['config'] = function () use ($config) {
+            return new Config($config);
+        };
+
+
+        if (!empty($this['config']['cache']) && $this['config']['cache'] instanceof CacheInterface) {
+            $this['cache'] = $this['config']['cache'];
+        } else {
+            $this['cache'] = function () {
+                return new FilesystemCache(sys_get_temp_dir());
+            };
+        }
+
+        $this['component_access_token'] = function () {
+            return new ComponentAccessToken(
+                $this['config']['appId'],
+                $this['config']['appSecret'],
+                $this['cache']
+            );
+        };
+
+
+        //var_dump($this['config']);
+        //var_dump($this['component_access_token']);
+
+
+        //$access_token = new ComponentAccessToken();
+
+
+        $this->http = new ComponentHttp($this['component_access_token']->getToken());
+        //die();
+        //$this->http = new ComponentHttp(new ComponentAccessToken());
+        //$this->appid = Config::get('wechat.componentAppId');
+
     }
 
     /**
@@ -50,7 +91,7 @@ class Component
     public function loginPage($redirect, $identification = null)
     {
         $preAuthCode = $this->createPreAuthCode($identification);
-
+        //echo $preAuthCode;
         // 拼接出微信公众号登录授权页面url
         return sprintf(self::COMPONENT_LOGIN_PAGE, $this->appid, $preAuthCode, urlencode($redirect));
     }
@@ -65,20 +106,24 @@ class Component
     public function createPreAuthCode($identification)
     {
         $cacheKey = sprintf($this->preAuthCodeCacheKey, $identification);
+        $cached = $this['cache']->fetch($cacheKey);
 
-        return Cache::get($cacheKey, function () use ($cacheKey) {
-            $response = $this->http->jsonPost(self::API_CREATE_PREAUTHCODE, [
-                'component_appid' => $this->appid,
-            ]);
+        if(!empty($cached)) {
+            return $cached;
+        } else {
+            $response = $this->http->parseJSON($this->http->json(self::API_CREATE_PREAUTHCODE, ['component_appid' => $this->appid]));
+            if(isset($response['pre_auth_code']) && isset($response['expires_in'])) {
+                $pre_auth_code = $response['pre_auth_code'];
+                $expires_in = $response['expires_in'];
+                $this['cache']->save($cacheKey, $pre_auth_code, $expires_in - 300);
 
-            $pre_auth_code = $response['pre_auth_code'];
+                return $pre_auth_code;
+            } else {
+                echo 'error';
+            }
 
-            // 把pre_auth_code缓存起来
-            $expiresAt = Carbon::now()->addSeconds($response['expires_in']);
-            Cache::put($cacheKey, $pre_auth_code, $expiresAt);
+        }
 
-            return $pre_auth_code;
-        });
     }
 
     /**
@@ -106,8 +151,7 @@ class Component
             'component_appid'    => $this->appid,
             'authorization_code' => $authorization_code,
         );
-
-        return $this->http->jsonPost(self::API_QUERY_AUTH, $params);
+        return $this->http->parseJSON($this->http->json(self::API_QUERY_AUTH, $params));
     }
 
     /**
@@ -122,8 +166,7 @@ class Component
             'component_appid'  => $this->appid,
             'authorizer_appid' => $authorizer_appid,
         );
-
-        return $this->http->jsonPost(self::API_GET_AUTHORIZER_INFO, $params);
+        return $this->http->parseJSON($this->http->json(self::API_GET_AUTHORIZER_INFO, $params));
     }
 
     /**
@@ -141,7 +184,7 @@ class Component
             'option_name'      => $option_name,
         );
 
-        return $this->http->jsonPost(self::API_GET_AUTHORIZER_OPTION, $params);
+        return $this->http->parseJSON($this->http->json(self::API_GET_AUTHORIZER_OPTION, $params));
     }
 
     /**
@@ -161,6 +204,6 @@ class Component
             'option_value'     => $option_value,
         );
 
-        return $this->http->jsonPost(self::API_SET_AUTHORIZER_OPTION, $params);
+        return $this->http->parseJSON($this->http->json(self::API_SET_AUTHORIZER_OPTION, $params));
     }
 }

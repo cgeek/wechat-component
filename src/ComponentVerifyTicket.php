@@ -2,8 +2,6 @@
 
 namespace IWankeji\Wechat;
 
-use Illuminate\Support\Facades\Cache;
-
 /**
  * 推送component_verify_ticket协议
  *
@@ -20,6 +18,7 @@ class ComponentVerifyTicket
 
     public static function getTicket()
     {
-        return Cache::get(self::$cacheKey);
+        var_dump(Cache);
+        //return Cache::get(self::$cacheKey);
     }
 }

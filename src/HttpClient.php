@@ -2,8 +2,8 @@
 
 namespace IWankeji\Wechat;
 
-use Overtrue\Wechat\Exception;
-use Overtrue\Wechat\Utils\Http;
+use EasyWeChat\Core\Exception;
+use EasyWeChat\Core\Http;
 use Overtrue\Wechat\Utils\JSON;
 
 class HttpClient extends Http
@@ -45,6 +45,8 @@ class HttpClient extends Http
             $url .= (stripos($url, '?') ? '&' : '?') . 'component_access_token=' . $this->component_access_token;
         }
 
+
+
         $method = strtoupper($method);
 
         if ($this->json) {
@@ -55,15 +57,18 @@ class HttpClient extends Http
 
         $this->json = false;
 
-        if (empty($response['data'])) {
+
+        if (empty($response)) {
             throw new Exception('服务器无响应');
         }
 
+        return $response;
         // 文本或者json
         $textMIME = '~application/json|text/plain~i';
 
-        $contents = JSON::decode($response['data'], true);
+        //$contents = JSON::decode($response['data'], true);
 
+        $contents = $response;
         // while the response is an invalid JSON structure, returned the source data
         if (!preg_match($textMIME,
                 $response['content_type']) || (JSON_ERROR_NONE !== json_last_error() && false === $contents)
